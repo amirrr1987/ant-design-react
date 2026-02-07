@@ -1,0 +1,12 @@
+{
+  "welcome": "خوش آمدید",
+  "login": "ورود",
+  "register": "ثبت نام",
+  "forgotPassword": "فراموشی رمز عبور",
+  "username": "نام کاربری",
+  "password": "رمز عبور",
+  "email": "ایمیل",
+  "confirmPassword": "تایید رمز عبور",
+  "dashboard": "داشبورد",
+  "logout": "خروج"
+}

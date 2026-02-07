@@ -1,0 +1,99 @@
+---
+description: قوانین استفاده از کامپوننت‌های Ant Design — اول از node_modules (بر اساس interface)، در صورت نبود یا نیاز بیشتر از سایت
+globs: **/*.{tsx,jsx,ts,js}
+alwaysApply: false
+---
+
+# Ant Design Component Usage Rules
+
+استفاده از هر کامپوننت **antd** فقط بر اساس **interface و API همان کامپوننت** انجام شود. **ترتیب مرجع:** اول از داخل پروژه (`node_modules`)، در صورت نبود یا نیاز به جزئیات بیشتر از سایت.
+
+---
+
+## ۱. ترتیب استفاده از مراجع (الزامی)
+
+### مرحلهٔ اول — جستجو در node_modules
+
+- **همیشه اول** داخل `node_modules/antd` دنبال کامپوننت و interface آن بگرد:
+  - مسیرهای معمول: `node_modules/antd/es/<ComponentName>/` (مثلاً `es/Button/`, `es/Table/`)
+  - فایل‌های تایپ: `*.d.ts` یا تعریف در `index.d.ts` همان پوشه
+  - تایپ‌های export شده از پکیج: مثلاً `import type { ButtonProps, TableProps } from 'antd'`
+- **بر اساس همان interface و props تعریف‌شده در node_modules** استفاده کن؛ لیست props، رویدادها و نوع آن‌ها را از همینجا بگیر.
+- **ممنوع:** حدس زدن یا کپی کردن API از جای دیگر؛ اگر تایپ در antd تعریف شده، منبع فقط همان است.
+
+### مرحلهٔ دوم — سایت (فقط در صورت نیاز)
+
+- **اگر** کامپوننت در `node_modules` پیدا نشد، یا برای **جزئیات بیشتر** (مثال‌ها، رفتار، مقادیر مجاز) نیاز بود، آنوقت از [ant.design/components](https://ant.design/components/overview/) استفاده کن (مثلاً [Button](https://ant.design/components/button)، [Table](https://ant.design/components/table)).
+- API، Examples و Props در سایت مکمل هستند؛ ولی **تعریف رسمی interface و props در نسخهٔ نصب‌شدهٔ پروژه داخل node_modules است**.
+
+### خلاصهٔ ترتیب
+
+1. **اول:** `node_modules/antd` → پیدا کردن کامپوننت و interface، استفاده بر اساس همان.
+2. **بعد (در صورت نبود یا نیاز بیشتر):** سایت [ant.design/components](https://ant.design/components/overview/) برای مستندات و مثال‌ها.
+
+- **ممنوع:** استفاده از prop یا مقداری که در API/interface آن کامپوننت (در node_modules یا مستندات) تعریف نشده؛ ساخت wrapper که رفتار/ظاهر را بر خلاف طراحی antd عوض کند بدون توجیه.
+
+---
+
+## ۲. رعایت دقیق Interface و Props (بر اساس node_modules)
+
+- **TypeScript:** همیشه از تایپ‌های export شدهٔ antd استفاده شود (مثلاً `ButtonProps`, `TableProps`, `FormInstance`) — منبع این تایپ‌ها همان `node_modules/antd` است.
+- **فقط props تعریف‌شده در interface:** فقط propهایی که در تایپ آن کامپوننت در `node_modules/antd` (یا در مستندات در صورت مراجعه) وجود دارند استفاده شوند.
+- **مقادیر مجاز:** برای propهایی که مقدار ثابت دارند (مثل `size`, `type`) فقط مقادیر تعریف‌شده در تایپ استفاده شوند.
+- **رویدادها و callbacks:** امضای (signature) تابع‌های callback دقیقاً مطابق interface آن کامپوننت در node_modules باشد.
+
+---
+
+## ۳. دسته‌بندی کامپوننت‌ها (طبق Overview)
+
+استفاده از کامپوننت درست برای سناریوی درست؛ ترجیح کامپوننت رسمی در دستهٔ مناسب:
+
+| دسته | کامپوننت‌های شاخص | کاربرد |
+|-----|-------------------|--------|
+| **General** | Button, FloatButton, Icon, Typography | دکمه، آیکون، متن |
+| **Layout** | Divider, Flex, Grid, Layout, Space, Splitter, Masonry | چیدمان و فاصله |
+| **Navigation** | Anchor, Breadcrumb, Dropdown, Menu, Pagination, Steps, Tabs | مسیریابی و ناوبری |
+| **Data Entry** | Form, Input, Select, DatePicker, Checkbox, Radio, Upload, … | ورودی و فرم |
+| **Data Display** | Table, Card, Descriptions, List, Tree, Tag, Tooltip, … | نمایش داده |
+| **Feedback** | Alert, Message, Modal, Notification, Spin, Progress, Popconfirm, … | فیدبک و وضعیت |
+| **Other** | ConfigProvider, App, Affix | پیکربندی و ابزار |
+
+- برای نیازهای پیشرفته (مثل Layout پروژه، فرم‌های پیچیده، جدول با ابزار زیاد) می‌توان از [Pro Components](https://procomponents.ant.design) (ProLayout, ProForm, ProTable و غیره) استفاده کرد؛ آن‌ها هم بر اساس antd و با API مستند هستند.
+- **List** در antd به‌صورت DEPRECATED علامت خورده؛ برای لیست‌های جدید از الگوهای جایگزین یا ProList در صورت نیاز استفاده شود.
+
+---
+
+## ۴. Import و استفاده در کد
+
+- **Import از `antd`:** کامپوننت‌ها فقط از پکیج `antd` import شوند:
+
+```tsx
+import { Button, Table, Form, message } from 'antd';
+import type { ButtonProps, TableProps } from 'antd';
+```
+
+- **هوک‌ها و متدهای وابسته به context:** برای `message`, `modal`, `notification` که به ConfigProvider/App وابسته‌اند از الگوی رسمی استفاده شود تا تم و زبان اعمال شود:
+  - `message.useMessage()` و قرار دادن `contextHolder` در درخت، یا
+  - استفاده از `App` و متدهای ارائه‌شده توسط آن.
+- **کامپوننت‌های مرکب:** وقتی یک کامپوننت زیرکامپوننت دارد (مثل `Form.Item`, `Select.Option`)، از همان ساختار و API رسمی آن استفاده شود؛ نام و props را از تایپ در `node_modules/antd` (و در صورت نیاز از مستندات) بگیر.
+
+---
+
+## ۵. چک قبل از نوشتن/تغییر
+
+قبل از پیاده‌سازی یا تغییر استفاده از یک کامپوننت:
+
+1. **اول — تایپ در پروژه:** در `node_modules/antd` کامپوننت و فایل تایپ آن را پیدا کن (مثلاً `es/Button/button.d.ts` یا export از `antd`)؛ لیست props، رویدادها و نوع آن‌ها را از همینجا بگیر و بر همان اساس استفاده کن.
+2. **در صورت نیاز — مستندات و Examples:** اگر در node_modules کافی نبود یا به مثال/رفتار نیاز داشتی، صفحهٔ آن کامپوننت در [ant.design/components](https://ant.design/components/overview/) (مثلاً `/components/button`) را ببین؛ فقط با props و الگوهای مجاز گسترش بده.
+
+---
+
+## ۶. خلاصهٔ الزامات
+
+- **مرجع اول:** `node_modules/antd` — اول از اینجا کامپوننت و interface را پیدا کن و بر همان اساس استفاده کن.
+- **مرجع بعدی (در صورت نبود یا نیاز بیشتر):** [مستندات Components](https://ant.design/components/overview/) برای API، Examples و جزئیات.
+- هیچ prop یا رفتاری که در API/interface رسمی تعریف نشده اضافه یا فرض نشود.
+- تایپ‌های TypeScript از خود antd (همان نسخهٔ node_modules) استفاده شوند؛ در صورت نیاز به extend از نوع‌های export شدهٔ antd (مثل `ButtonProps`) استفاده شود.
+- دسته‌بندی Overview رعایت شود تا کامپوننت مناسب برای هر سناریو انتخاب شود.
+
+در صورت تناقض، **تعریف تایپ/کد هر کامپوننت در `node_modules/antd` مرجع نهایی است**؛ سایت برای تکمیل و مثال.

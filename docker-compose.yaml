@@ -1,0 +1,11 @@
+services:
+  crops-payment:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: crops-payment-app
+    ports:
+      - '4200:80'
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production

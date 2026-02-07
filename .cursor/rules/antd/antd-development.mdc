@@ -1,0 +1,117 @@
+---
+description: قوانین پیاده‌سازی و تنظیمات اولیه Ant Design of React — نصب، ساختار، تم، و بهترین روش‌های توسعه طبق مستندات رسمی
+globs: **/*.{tsx,jsx,ts,js,json}
+alwaysApply: false
+---
+
+# Ant Design Development Rules
+
+همهٔ نصب، پیکربندی و استفاده از **Ant Design of React** (`antd`) طبق [مستندات رسمی Development](https://ant.design/docs/react/introduce) و Getting Started انجام شود.
+
+---
+
+## ۱. محیط و نسخه‌ها
+
+- **Node.js:** حداقل v16 یا بالاتر؛ قبل از شروع نصب و تنظیم صحیح Node انجام شود.
+- **React:** برای `antd` 6.x فقط React 18+ پشتیبانی می‌شود (پشتیبانی React 16/17 حذف شده).
+- **مرورگرها:** فقط مرورگرهای مدرن (Edge, Firefox, Chrome, Safari, Opera – آخرین دو نسخه) و Electron؛ IE پشتیبانی نمی‌شود.
+- پیش‌نیاز دانش: HTML, CSS, JavaScript و React در سطح متوسط؛ برای پروژهٔ محلی از [Scaffolding Guide](https://u.ant.design/guide) یا اسکافلدهای رسمی استفاده شود.
+
+---
+
+## ۲. نصب (Installation)
+
+- **روش توصیه‌شده:** نصب با npm یا yarn یا pnpm یا bun؛ تا از اکوسیستم و ابزارهای جاوااسکریپت استفاده شود.
+
+```bash
+npm install antd --save
+# یا: yarn add antd / pnpm add antd / bun add antd
+```
+
+- **ممنوع:** لود کردن کل فایل‌های `antd.js` / `antd.min.js` از طریق `<script>` و CDN در پروژهٔ production؛ باعث حجیم شدن اپ و سخت شدن به‌روزرسانی و رفع باگ می‌شود.
+- **استثنا:** فقط در سناریوهای خاص بدون بیلد (مثلاً دمو ساده)؛ در هر صورت قبل از `antd.js` باید `react`, `react-dom`, `dayjs` لود شده باشند.
+- در شبکهٔ ضعیف می‌توان از رجیستری دیگر (مثل cnpm) استفاده کرد.
+
+---
+
+## ۳. استفاده در کد (Usage)
+
+- **Import به‌صورت ماژولار:** همیشه از import نام‌دار استفاده شود، نه global:
+
+```tsx
+import { Button, DatePicker, message } from 'antd';
+```
+
+- **Tree Shaking:** `antd` به‌صورت پیش‌فرض از ES modules پشتیبانی می‌کند؛ با بیلدر (Vite, webpack و غیره) فقط کد کامپوننت‌های استفاده‌شده باندل می‌شود.
+- **بدون نصب `@types/antd`:** تایپ‌های TypeScript داخل خود `antd` هستند؛ پکیج جدا نصب نشود.
+
+---
+
+## ۴. ابزار بیلد (Build Tool)
+
+- **توصیه:** استفاده از یک بیلدر (مثل [Vite](https://vitejs.dev/), [webpack](https://webpack.js.org)) برای توسعه و بیلد؛ برای پروژهٔ جدید با Vite می‌توان از `npm create vite` و سپس نصب `antd` استفاده کرد.
+- **ساختار اولیه با Vite:** بعد از `npm create vite antd-demo` و `cd antd-demo` و `npm install`، با `npm install antd --save` پکیج antd اضافه شود؛ کامپوننت‌ها از `antd` در فایل‌های اپ (مثلاً `App.jsx`/`App.tsx`) import شوند.
+- برای گردش کار کامل (compile/build/deploy/lint) از اسکافلدهای رسمی مثل [Ant Design Pro](https://pro.ant.design/) یا [Scaffold Market](https://scaffold.ant.design/) استفاده شود.
+
+---
+
+## ۵. وابستگی‌ها
+
+- **dayjs:** برای کامپوننت‌هایی مثل `DatePicker` لازم است؛ در صورت استفاده، مطمئن شوید در پروژه نصب است (antd آن را به‌صورت peer استفاده می‌کند).
+- برای استفاده از کتابخانهٔ تاریخ دیگر، مستند [Use custom date library](https://ant.design/docs/react/use-custom-date-library) رعایت شود.
+
+---
+
+## ۶. ConfigProvider و تم (Theme)
+
+- **تم و زبان:** تنظیمات سراسری تم و زبان (مثل `locale`) از طریق `ConfigProvider` اعمال شود:
+
+```tsx
+import { ConfigProvider } from 'antd';
+
+<ConfigProvider theme={{ token: { colorPrimary: '#1677ff' } }} locale={faIR}>
+  <App />
+</ConfigProvider>
+```
+
+- **Design Token:** تغییر رنگ برند، فونت، فاصله و غیره از طریق `theme.token` در `ConfigProvider`؛ برای تم تیره از `theme.darkAlgorithm`، برای compact از `theme.compactAlgorithm` استفاده شود.
+- **Static methods و Context:** متدهای استاتیک مثل `message.xxx`, `Modal.xxx`, `notification.xxx` خارج از context اپ رندر می‌شوند؛ برای اینکه تم/زبان ConfigProvider روی آن‌ها اعمال شود از الگوی `contextHolder` یا [App Component](https://ant.design/components/app) استفاده شود (مثلاً `message.useMessage()` و قرار دادن `contextHolder` در درخت کامپوننت).
+
+---
+
+## ۷. گزارش باگ و دمو
+
+- برای گزارش باگ، ترجیحاً یک [CodeSandbox قابل تکرار](https://u.ant.design/reproduce) ارائه شود.
+- قبل از پست کردن issue، راهنماهای [How To Ask Questions The Smart Way](https://www.catb.org/~esr/faqs/smart-questions.html) و [How to Report Bugs Effectively](https://www.chiark.greenend.org.uk/~sgtatham/bugs.html) رعایت شوند.
+
+---
+
+## ۸. تست (Jest)
+
+- در صورت استفاده از Jest: آنت‌دیزاین از ماژول‌های ESM استفاده می‌کند؛ در config Jest باید transform مناسب (مثلاً برای ts/tsx/js/jsx) تنظیم شود تا ESM درست پردازش شود.
+
+---
+
+## ۹. لینک‌های مرجع
+
+- [Ant Design of React – Introduction](https://ant.design/docs/react/introduce)
+- [Getting Started](https://ant.design/docs/react/getting-started)
+- [Usage with Vite](https://ant.design/docs/react/use-with-vite)
+- [Customize Theme](https://ant.design/docs/react/customize-theme)
+- [Internationalization](https://ant.design/docs/react/i18n)
+- [Components Overview](https://ant.design/components/overview)
+- [Changelog](https://ant.design/changelog)
+- [FAQ](https://ant.design/docs/react/faq)
+
+---
+
+## خلاصهٔ چک‌لیست
+
+- [ ] Node 16+ و React 18+ (برای antd 6)
+- [ ] نصب با npm/yarn/pnpm/bun؛ بدون لود کل antd از CDN در پروژهٔ اصلی
+- [ ] Import ماژولار از `antd`؛ بدون `@types/antd`
+- [ ] استفاده از بیلدر (Vite/webpack) و در صورت نیاز اسکافلد رسمی
+- [ ] تم و locale از طریق ConfigProvider؛ برای message/modal/notification از contextHolder یا App
+- [ ] dayjs در صورت استفاده از DatePicker و مشابه
+
+در صورت تناقض با مستندات، [ant.design/docs/react](https://ant.design/docs/react/introduce) مرجع نهایی است.
