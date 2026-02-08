@@ -1,3 +1,6 @@
+
+import '@/assets/styles/fonts.css'
+import '@/assets/styles/tailwind.css'
 import '@/assets/styles/main.css'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
